@@ -1,0 +1,22 @@
+{
+  "name": "fen-bench",
+  "version": "0.1.0",
+  "description": "A small, sane JS micro-benchmark library",
+  "main": "index.js",
+  "scripts": {
+    "test": "node sample/arrayBench.js"
+  },
+  "keywords": [
+    "js",
+    "benchmark",
+    "microbenchmark"
+  ],
+  "author": "andy hall",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/andyhall/fen-bench"
+  },
+  "devDependencies": {},
+  "dependencies": {}
+}
