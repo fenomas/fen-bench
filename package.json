@@ -4,7 +4,8 @@
   "description": "A small, sane JS micro-benchmark library",
   "main": "index.js",
   "scripts": {
-    "test": "node sample/arrayBench.js"
+    "test": "node sample/arrayBench.js",
+    "start": "cd temp && webpack-dev-server"
   },
   "keywords": [
     "js",

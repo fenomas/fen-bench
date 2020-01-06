@@ -14,73 +14,60 @@ bench.maxMeasurements = 10  // how many data points to keep
 
 // setup
 var N = 1e5
-var array = []
-var intArray = new Int16Array(N)
+var inputs = []
 for (var i = 0; i < N; i++) {
-    array[i] = i % 100
-    intArray[i] = i % 100
+    inputs[i] = Math.PI * (1 + 4 * Math.random())
 }
 
 
 // create test cases
 bench.testCases.push({
-    name: 'Array for loop',
+    name: 'modulo',
     fn: () => {
         var sum = 0
-        for (var i = 0; i < array.length; i++) {
-            sum += array[i]
+        var twopi = 2 * Math.PI
+        for (var i = 0; i < inputs.length; i++) {
+            sum = (sum + inputs[i] + twopi) % twopi
         }
         return sum
     },
 })
 
+
+
 bench.testCases.push({
-    name: 'Array.forEach',
+    name: 'if/if',
     fn: () => {
         var sum = 0
-        array.forEach(n => {
+        var twopi = 2 * Math.PI
+        for (var i = 0; i < inputs.length; i++) {
+            var n = inputs[i]
+            if (n < 0) n += twopi
             sum += n
-        })
-        return sum
-    },
-})
-
-bench.testCases.push({
-    name: 'Array / reduce',
-    fn: () => {
-        return array.reduce((accum, num) => accum + num, 0)
-    },
-})
-
-bench.testCases.push({
-    name: 'IntArray for loop',
-    fn: () => {
-        var sum = 0
-        for (var i = 0; i < intArray.length; i++) {
-            sum += intArray[i]
+            if (sum > twopi) sum -= twopi
         }
         return sum
     },
 })
 
+
+
 bench.testCases.push({
-    name: 'IntArray.forEach',
+    name: 'if/while',
     fn: () => {
         var sum = 0
-        intArray.forEach(n => {
+        var twopi = 2 * Math.PI
+        for (var i = 0; i < inputs.length; i++) {
+            var n = inputs[i]
+            if (n < 0) n += twopi
             sum += n
-        })
+            while (sum > twopi) sum -= twopi
+        }
         return sum
     },
 })
 
 
-bench.testCases.push({
-    name: 'IntArray / reduce',
-    fn: () => {
-        return intArray.reduce((accum, num) => accum + num, 0)
-    },
-})
 
 
 

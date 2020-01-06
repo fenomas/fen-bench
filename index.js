@@ -96,7 +96,7 @@ function Bench() {
 
         // recalc mean/stdev
         if (item._results.length > self.maxMeasurements) {
-            item._results.lenth = self.maxMeasurements
+            item._results.length = self.maxMeasurements
         }
         item.ops = mean(item._results)
         item.dev = deviation(item._results)
