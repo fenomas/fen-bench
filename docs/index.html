@@ -1,0 +1,119 @@
+<!DOCTYPE HTML>
+<html lang="en">
+
+<head>
+    <title>fen-bench</title>
+    <meta charset="utf-8">
+    <style type="text/css">
+        html,
+        body {
+            height: 100%;
+            font: 300 18px "Helvetica Neue", Meiryo, Helvetica, sans-serif;
+            margin: 1rem 1.5rem;
+        }
+
+        .title {
+            margin: 0.5rem;
+            font-size: 24px;
+            font-weight: 700;
+        }
+
+        .body {
+            margin-left: 2rem;
+        }
+
+        button,
+        input {
+            margin: 0.1rem;
+            font: inherit;
+            font-size: 18px;
+        }
+
+        .left {
+            width: 8rem;
+            text-align: right;
+            display: inline-block;
+        }
+
+        .item {
+            display: block;
+            margin: 0.8rem;
+            clear: left;
+        }
+
+        #progText {
+            display: inline-block;
+            vertical-align: top;
+            width: 500px;
+            min-width: 450px;
+            height: 14rem;
+            font: 400 12px monospace;
+            white-space: nowrap;
+            overflow: auto;
+            resize: both;
+            margin: 2px 1rem;
+        }
+
+        #start {
+            display: inline;
+            vertical-align: top;
+            padding: 0.5rem 2rem;
+        }
+
+        .output {
+            font-family: monospace;
+            font-weight: 400;
+            display: inline-block;
+            vertical-align: top;
+            margin: 2px 1rem;
+        }
+
+        .red {
+            background-color: #fee;
+        }
+
+        .redder {
+            background-color: #fcc;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="title">fen-bench </div>
+
+    <div class="body">
+        <div class="item">
+            <label class="left">time per test</label>
+            <input id="dur" type="range" min="10" max="400" step="10" value="100" />
+            <label class="right" id="durLabel"></label>
+        </div>
+
+        <div class="item">
+            <label class="left">between tests</label>
+            <input id="pause" type="range" min="5" max="100" step="5" value="15" />
+            <label class="right" id="pauseLabel"></label>
+        </div>
+
+        <div class="item">
+            <label class="left">keep the last</label>
+            <input id="meas" type="range" min="5" max="50" step="1" value="20" />
+            <label class="right" id="measLabel"></label>
+        </div>
+
+        <div class="item">
+            <label class="left">Program:</label>
+            <textarea id="progText"></textarea>
+        </div>
+
+        <div class="item">
+            <div class="left">
+                <button id="start">Start</button>
+            </div>
+            <pre id="output" class="output"></pre>
+        </div>
+    </div>
+
+    <script type="text/javascript" src="bundle.js"></script>
+</body>
+
+</html>

@@ -1,7 +1,7 @@
 
 var path = require('path')
-var entryPath = path.resolve('.', 'index.js')
-var buildPath = path.resolve('.', 'dist')
+var entryPath = path.resolve('..', 'examples', 'webDemo.js')
+var buildPath = path.resolve('.')
 var buildFilename = 'bundle.js'
 
 
@@ -22,6 +22,13 @@ module.exports = (env) => ({
         path: buildPath,
         filename: buildFilename,
     },
+
+    watchOptions: {
+        aggregateTimeout: 500,
+        poll: 1000,
+        ignored: ["node_modules"],
+    },
+
     devServer: {
         contentBase: buildPath,
         inline: true,

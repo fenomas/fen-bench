@@ -1,12 +1,16 @@
 {
   "name": "fen-bench",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "A small, sane JS micro-benchmark library",
-  "main": "index.js",
+  "main": "src/index.js",
   "scripts": {
-    "test": "node sample/arrayBench.js",
-    "start": "cd temp && webpack-dev-server"
+    "test": "node examples/nodeExample.js",
+    "start": "cd docs && webpack-dev-server",
+    "build": "cd docs && webpack"
   },
+  "files": [
+    "/src"
+  ],
   "keywords": [
     "js",
     "benchmark",
