@@ -13,20 +13,22 @@ bench.maxMeasurements = 10  // how many data points to keep
 
 
 // make test cases
-var nums = []
-while (nums.length < 1e5) nums.push(Math.random())
+var N = 1e5
 
-var arrForEach = () => {
-    var sum = 0
-    nums.forEach(n => { sum += n })
+var nopow = () => {
+    for (var sum = 0, i = 0; i < N; i++) {
+        sum += (i * i * i) / N
+    }
+    return sum
+}
+var pow = () => {
+    for (var sum = 0, i = 0; i < N; i++) {
+        sum += Math.pow(i, 3) / N
+    }
     return sum
 }
 
-var arrReduce = () => {
-    return nums.reduce((sum, n) => sum + n, 0)
-}
-
-bench.testCases = [arrForEach, arrReduce]
+bench.testCases = [nopow, pow]
 
 
 

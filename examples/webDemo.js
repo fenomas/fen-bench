@@ -7,20 +7,22 @@
 
 var Bench = require('../src')
 var bench = new Bench()
-var defaultProg = `var nums = []
-while (nums.length < 1e5) nums.push(Math.random())
+var defaultProg = `var N = 1e5
 
-var arrForEach = () => {
-    var sum = 0
-    nums.forEach(n => { sum += n })
+var nopow = () => {
+    for (var sum = 0, i = 0; i < N; i++) {
+        sum += (i * i * i) / N
+    }
+    return sum
+}
+var pow = () => {
+    for (var sum = 0, i = 0; i < N; i++) {
+        sum += Math.pow(i, 3) / N
+    }
     return sum
 }
 
-var arrReduce = () => {
-    return nums.reduce((sum, n) => sum + n, 0)
-}
-;[arrForEach, arrReduce]`
-
+return [nopow, pow]`
 
 
 /*
@@ -74,11 +76,9 @@ log('(output)')
  * 
 */
 
+var makeTests = null
 prog.value = defaultProg
-var tests = eval(defaultProg)
-var ok = Array.isArray(tests)
-if (ok) tests.forEach(el => { ok = ok && (typeof el === 'function') })
-if (ok) bench.testCases = tests
+tryToSetProgram(defaultProg)
 
 function toggle() {
     if (bench.running) {
@@ -86,6 +86,19 @@ function toggle() {
         but.textContent = 'Start'
         but.classList.remove('redder')
     } else {
+        if (typeof makeTests === 'function') {
+            try {
+                var tests = makeTests()
+                if (!Array.isArray(tests)) throw 'Program must return an array of test functions'
+                tests.forEach(fn => fn())
+                bench.testCases = tests.slice()
+                bench.results.length = 0
+            } catch (err) {
+                bench.testCases = []
+                log(err)
+                return
+            }
+        }
         bench.start()
         but.textContent = 'Stop'
         but.classList.add('redder')
@@ -95,20 +108,18 @@ function toggle() {
 function tryToSetProgram(str) {
     if (bench.running) toggle()
     iter = 0
-    var tests
-    try { tests = eval(str) } catch { }
-    var ok = Array.isArray(tests)
-    if (ok) tests.forEach(el => { ok = ok && (typeof el === 'function') })
-    if (ok) {
+    makeTests = null
+    try {
+        makeTests = new Function(str)
+    } catch (err) { makeTests = null }
+    if (typeof makeTests === 'function') {
         prog.classList.remove('red')
-        bench.testCases = tests
-        log('')
     } else {
         prog.classList.add('red')
-        log('(program text must evaluate to an array of functions)')
     }
-
+    log('')
 }
+
 
 var iter = 0
 bench.callback = function () {
@@ -122,9 +133,19 @@ bench.callback = function () {
         var dev = '±' + pct + '%'
         s += ' ' + fnName.padEnd(14).substr(0, 14) + ' '
         s += ops.padStart(14) + '  '
-        s += dev + '\n'
+        s += dev
+        if (natives.allowed) {
+            var status = natives.status(bench.testCases[i])
+            s += '       ' + status
+            bench.testCases[i]
+        }
+        s += '\n'
     })
     log(s + '\n  iterations'.padEnd(17) + (++iter))
+
+    if (natives.allowed && (iter % 10) === 0) {
+        bench.testCases.forEach(fn => natives.optNext(fn))
+    }
 }
 
 
@@ -138,3 +159,43 @@ var format = num => {
     return num.toPrecision(3) + suffix
 }
 
+
+
+
+// extras that work if you run chrome with:
+//      chrome --js-flags='--allow-natives-syntax'
+var natives = (() => {
+    var allowed = true
+    var statusNum = function () { return -1 }
+    var optNext = function () { }
+    try {
+        statusNum = new Function('f', 'return %GetOptimizationStatus(f)')
+        optNext = new Function('f', '%OptimizeFunctionOnNextCall(f)')
+    } catch (e) {
+        allowed = false
+    }
+    var status = (f) => {
+        var num = statusNum(f)
+        if (num < 0) return 'n/a'
+        var s = ''
+        if (num & (1 << 0)) s += 'fn '
+        if (num & (1 << 1)) s += 'never-opt '
+        if (num & (1 << 2)) s += 'always-opt '
+        if (num & (1 << 3)) s += 'deopted? '
+        if (num & (1 << 4)) s += 'opt '
+        if (num & (1 << 5)) s += 'turbofan '
+        if (num & (1 << 6)) s += 'interpreted '
+        if (num & (1 << 7)) s += 'marked '
+        if (num & (1 << 8)) s += 'marked-con '
+        if (num & (1 << 9)) s += 'ex '
+        if (num & (1 << 10)) s += 'topTF '
+        return s
+    }
+    return { allowed, status, optNext }
+})()
+
+
+window.natives = natives
+window.bench = bench
+
+if (natives.allowed) $('#note').style.display = 'none'

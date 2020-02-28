@@ -36,9 +36,10 @@ module.exports = function Bench() {
     var testIndex = 0
 
 
-    
+
 
     function runTests() {
+        if (!self.running) return
         var tests = self.testCases
         var results = self.results
         if (tests.length === 0) return bail('No test cases defined')

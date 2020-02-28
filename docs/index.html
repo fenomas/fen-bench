@@ -46,7 +46,7 @@
             vertical-align: top;
             width: 500px;
             min-width: 450px;
-            height: 14rem;
+            height: 14.5rem;
             font: 400 12px monospace;
             white-space: nowrap;
             overflow: auto;
@@ -66,6 +66,11 @@
             display: inline-block;
             vertical-align: top;
             margin: 2px 1rem;
+        }
+
+        .code {
+            font-family: monospace;
+            font-weight: 400;
         }
 
         .red {
@@ -111,6 +116,13 @@
             </div>
             <pre id="output" class="output"></pre>
         </div>
+    </div>
+
+    <div id="note">
+        <p>&nbsp;</p>
+        <hr>
+        Note: to see optimization status, run in chrome with flag:
+        <span class="code">--js-flags='--allow-natives-syntax'</span>
     </div>
 
     <script type="text/javascript" src="bundle.js"></script>
