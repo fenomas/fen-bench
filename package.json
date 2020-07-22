@@ -1,6 +1,6 @@
 {
   "name": "fen-bench",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "description": "A small, sane JS micro-benchmark library",
   "main": "src/index.js",
   "scripts": {

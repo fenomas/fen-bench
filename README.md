@@ -50,6 +50,9 @@ bench.callback = () => {
         console.log(res.dev, 'std. deviation')
     })
 }
+
+// clears currently stored results
+bench.reset()
 ```
 
 Standard disclaimers apply for test cases - they should return a 

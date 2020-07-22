@@ -23,6 +23,10 @@ module.exports = function Bench() {
 
     this.callback = () => { }
 
+    this.reset = () => {
+        testIndex = 0
+        this.results.length = 0
+    }
 
 
 
@@ -44,14 +48,16 @@ module.exports = function Bench() {
         var results = self.results
         if (tests.length === 0) return bail('No test cases defined')
 
-        // conform next test case & object
+        // conform internals and next test case
+        while (results.length > tests.length) results.pop()
         if (testIndex >= tests.length) testIndex = 0
         var testFn = tests[testIndex]
-        if (testIndex >= testObjects.length ||
-            testObjects[testIndex].fn !== testFn) {
-            testObjects[testIndex] = makeTestObject(testFn)
-        }
         var testObj = testObjects[testIndex]
+        if (!testObj || (testObj.fn !== testFn)) {
+            testObjects[testIndex] = makeTestObject(testFn)
+            testObj = testObjects[testIndex]
+            results[testIndex] = { ops: 0, dev: 0 }
+        }
 
         // synchronously run one battery on one function
         var returnVal = runBattery(testObj.fn, self.testDuration, testObj.results)
@@ -63,10 +69,9 @@ module.exports = function Bench() {
         }
         testObj.lastReturnValue = returnVal
 
-        // update results
+        // update test obj results
         while (testObj.results.length > self.maxMeasurements) testObj.results.pop()
-        while (results.length > tests.length) results.pop()
-        if (results.length <= testIndex) results[testIndex] = {}
+        while (results.length <= testIndex) results.push({ ops: 0, dev: 0 })
         results[testIndex].ops = mean(testObj.results)
         results[testIndex].dev = deviation(testObj.results)
 

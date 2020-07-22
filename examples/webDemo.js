@@ -9,20 +9,22 @@ var Bench = require('../src')
 var bench = new Bench()
 var defaultProg = `var N = 1e5
 
-var nopow = () => {
-    for (var sum = 0, i = 0; i < N; i++) {
-        sum += (i * i * i) / N
+export function cube() {
+    for (var max=0, i=0; i<N; i++) {
+        max = Math.max(max, i * i * i)
     }
-    return sum
-}
-var pow = () => {
-    for (var sum = 0, i = 0; i < N; i++) {
-        sum += Math.pow(i, 3) / N
-    }
-    return sum
+    return max
 }
 
-return [nopow, pow]`
+export function pow3() {
+    for (var max=0, i=0; i<N; i++) {
+        max = Math.max(max, Math.pow(i, 3))
+    }
+    return max
+}
+
+`
+
 
 
 /*
@@ -63,7 +65,6 @@ meas.oninput()
 
 prog.spellcheck = false
 but.onclick = toggle
-prog.oninput = ev => tryToSetProgram(prog.value)
 var log = str => out.textContent = str
 log('(output)')
 
@@ -76,49 +77,52 @@ log('(output)')
  * 
 */
 
-var makeTests = null
 prog.value = defaultProg
-tryToSetProgram(defaultProg)
+var lastProgStr = ''
 
-function toggle() {
+async function toggle() {
     if (bench.running) {
         bench.stop()
         but.textContent = 'Start'
         but.classList.remove('redder')
     } else {
-        if (typeof makeTests === 'function') {
-            try {
-                var tests = makeTests()
-                if (!Array.isArray(tests)) throw 'Program must return an array of test functions'
-                tests.forEach(fn => fn())
-                bench.testCases = tests.slice()
-                bench.results.length = 0
-            } catch (err) {
-                bench.testCases = []
-                log(err)
-                return
-            }
+        bench.testCases.length = 0
+        if (prog.value !== lastProgStr) {
+            bench.reset()
+            iter = 0
+            lastProgStr = prog.value
         }
-        bench.start()
-        but.textContent = 'Stop'
-        but.classList.add('redder')
+        var tests = await importTestFunctions(prog.value)
+        if (tests && tests.length > 0) {
+            bench.testCases = tests.slice()
+            bench.start()
+            but.textContent = 'Stop'
+            but.classList.add('redder')
+            prog.classList.remove('red')
+        } else {
+            prog.classList.add('red')
+        }
     }
 }
 
-function tryToSetProgram(str) {
-    if (bench.running) toggle()
-    iter = 0
-    makeTests = null
+async function importTestFunctions(str) {
+    var tests = []
     try {
-        makeTests = new Function(str)
-    } catch (err) { makeTests = null }
-    if (typeof makeTests === 'function') {
-        prog.classList.remove('red')
-    } else {
-        prog.classList.add('red')
-    }
-    log('')
+        var blob = new Blob([str], { type: 'application/javascript' })
+        mod = await import(/* webpackIgnore: true */ URL.createObjectURL(blob))
+        Object.keys(mod).forEach(k => {
+            var fn = mod[k]
+            if (typeof fn !== 'function') return
+            var res = fn() // run once to throw on errors
+            tests.push(fn)
+        })
+    } catch (err) { log(err); return null }
+    return tests
 }
+
+
+
+
 
 
 var iter = 0
