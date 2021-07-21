@@ -5,7 +5,7 @@
   "main": "src/index.js",
   "scripts": {
     "test": "node examples/nodeExample.js",
-    "start": "cd docs && webpack-dev-server",
+    "start": "cd docs && webpack serve",
     "build": "cd docs && webpack"
   },
   "files": [
@@ -20,7 +20,7 @@
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "https://github.com/andyhall/fen-bench"
+    "url": "https://github.com/fenomas/fen-bench"
   },
   "devDependencies": {},
   "dependencies": {}

@@ -10,7 +10,7 @@ It attempts to account for how modern JS engines optimize,
 by carefully managing references, measuring continuously, and 
 discarding old measurements.
 
-[Browser demo here](https://andyhall.github.io/fen-bench/)
+[Browser demo here](https://fenomas.github.io/fen-bench/)
 
 YMMV, but for me measuring performance this way has solved the 
 problem of getting wildly varying results over time or across 
@@ -62,7 +62,7 @@ test case as dead code, and optimizing it into an empty function.
 
 ----
 
-### Author: https://github.com/andyhall
+### Author: https://github.com/fenomas
 
 ### License: MIT
 
