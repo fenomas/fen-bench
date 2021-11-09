@@ -28,11 +28,11 @@ module.exports = (env) => ({
         poll: 1000,
         ignored: ["node_modules"],
     },
-
+    
+    stats: "minimal",
     devServer: {
-        contentBase: buildPath,
-        inline: true,
-        host: "0.0.0.0",
-        stats: "minimal",
+        static: buildPath,
+        // inline: true,
+        // host: "0.0.0.0",
     },
 })

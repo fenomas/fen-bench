@@ -8,19 +8,36 @@
 var Bench = require('../src')
 var bench = new Bench()
 var defaultProg = `var N = 1e5
+var arr = []
+while (arr.length < N) arr.push(Math.random())
 
-export function cube() {
-    for (var max=0, i=0; i<N; i++) {
-        max = Math.max(max, i * i * i)
-    }
-    return max
+
+export function forEach() {
+    var sum = 0
+    arr.forEach(n => { sum += n })
+    return sum
 }
 
-export function pow3() {
-    for (var max=0, i=0; i<N; i++) {
-        max = Math.max(max, Math.pow(i, 3))
-    }
-    return max
+export function reduce() {
+    return arr.reduce((sum, n) => sum + n, 0)
+}
+
+export function forLoop() {
+    var sum = 0
+    for (var i = 0; i < arr.length; i++) { sum += arr[i] }
+    return sum
+}
+
+export function forIn() {
+    var sum = 0
+    for (var i in arr) { sum += arr[i] }
+    return sum
+}
+
+export function forOf() {
+    var sum = 0
+    for (var n of arr) { sum += n }
+    return sum
 }
 
 `
@@ -109,11 +126,11 @@ async function importTestFunctions(str) {
     var tests = []
     try {
         var blob = new Blob([str], { type: 'application/javascript' })
-        mod = await import(/* webpackIgnore: true */ URL.createObjectURL(blob))
+        var mod = await import(/* webpackIgnore: true */ URL.createObjectURL(blob))
         Object.keys(mod).forEach(k => {
             var fn = mod[k]
             if (typeof fn !== 'function') return
-            var res = fn() // run once to throw on errors
+            fn() // run once to throw on errors
             tests.push(fn)
         })
     } catch (err) { log(err); return null }
